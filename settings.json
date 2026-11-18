@@ -1,0 +1,104 @@
+{
+  "variant": "osintneoai",
+  "identity": {
+    "owner_name": "OsintNeoAi Public Records & Journalism Legal Unit",
+    "from_email": "records@osintneoai.org",
+    "from_email_role": "Anonymous unit address for the OsintNeoAi user workspace. Investigators and workspace users send as the unit, never under a personal name.",
+    "signature_block": "OsintNeoAi Public Records & Journalism Legal Unit\nrecords@osintneoai.org",
+    "contact_note": "All responses should be directed to the unit address above. This dispatch is anonymous: no personal name, phone, or address appears on it.",
+    "timezone": "America/Los_Angeles",
+    "source": "Original engines: omnichannel_legal_service.py + foia_dispatch_engine.py @55cfacb (Sep 5, 2026) — see original/ in this variant.",
+    "opener_context": "with a public records request"
+  },
+  "engine": {
+    "approval_required": true,
+    "approval_rule": "Nothing goes out on any channel without the user approving the EXACT copy. Approval is bound to the SHA-256 hash of the exact draft approved. Any edit after approval voids the approval and requires re-approval.",
+    "built": "2026-11-18",
+    "channels": {
+      "certified_mail": {
+        "env_var": "LOB_API_KEY",
+        "note": "No key wired. Adapter returns status=skipped_no_key. NO tracking number is ever fabricated. Manual fallback: engine renders a printable letter PDF/text the user can mail himself.",
+        "paid_account_decision": "USER'S CALL — not yet made",
+        "provider": "Lob API (adapter carried over from fax_hardmail_dispatch_v2.py)",
+        "status": "STUB_SKIPPED_NO_KEY"
+      },
+      "email": {
+        "note": "Engine produces approval-ready drafts + a send packet. Actual send runs through the operator's mail route for the unit address after the operator approves the exact copy, so the sent copy is frozen and verifiable.",
+        "provider": "Operator mail route for records@osintneoai.org",
+        "status": "READY_AS_DRAFTS"
+      },
+      "fax": {
+        "env_var": "FAXBETTER_API_KEY",
+        "note": "No key wired. Adapter returns status=skipped_no_key. NO confirmation number is ever fabricated — a confirmation exists only when the provider returns one.",
+        "provider": "FaxBetter API (adapter carried over from fax_hardmail_dispatch_v2.py)",
+        "status": "STUB_SKIPPED_NO_KEY"
+      }
+    },
+    "engine_name": "OsintNeoAi Outreach — investigator / user-workspace variant (anonymous)",
+    "escalation": {
+      "clock_rule": "After each approved send, a 60-minute reply window starts. No substantive reply within the window advances the case to the next ladder level. Any reply stops the clock, is parsed for a named human / referral, and starts a fresh 60-minute window aimed at that human.",
+      "ladder": [
+        {
+          "action": "Do exactly what the target's own published directions say to do first (help page, recovery form, directed form/email). Log the direction quoted, where it was published, and when it was done.",
+          "level": 0,
+          "name": "DIRECTIONS_FIRST",
+          "when": "Before any contact"
+        },
+        {
+          "action": "Email from the unit address to the contact the directions name. Verbatim reason + requested action. Unit signature.",
+          "level": 1,
+          "name": "INITIAL_EMAIL",
+          "when": "T+0"
+        },
+        {
+          "action": "Same thread, same recipients. Restate verbatim ask, note the time of the first email and that no reply was received, request a named human and a case/reference number.",
+          "level": 2,
+          "name": "FOLLOWUP_1H",
+          "when": "T+60m, no substantive reply"
+        },
+        {
+          "action": "Same ask, approach changes: CC the next level up the target's chain (supervisor / director's office / legal). Attach the full contact log so far.",
+          "level": 3,
+          "name": "ESCALATE_CC_2H",
+          "when": "T+120m, no substantive reply"
+        },
+        {
+          "action": "Add second channel: fax the same letter (same verbatim ask) to the same office. Email notice that a fax copy follows for the paper trail. Fax sends only after its own exact-copy approval.",
+          "level": 4,
+          "name": "MULTICHANNEL_3H",
+          "when": "T+180m, no substantive reply"
+        },
+        {
+          "action": "Add paper channel: certified mail letter (same verbatim ask + full log) to the target's legal office. Email notice that certified mail follows. Mail sends only after its own exact-copy approval and a paid-account decision by the user.",
+          "level": 5,
+          "name": "LEGAL_PAPER_4H",
+          "when": "T+240m, no substantive reply"
+        },
+        {
+          "action": "Continue hourly. Each round changes only the approach: add a timeline exhibit, add an account-state exhibit, address the next named human in the chain, restate the deadline the target's own directions promised. The ask never changes.",
+          "level": 6,
+          "name": "HOURLY_CONTINUED",
+          "when": "Hourly after level 5"
+        }
+      ],
+      "reply_window_minutes": 60
+    },
+    "lineage": {
+      "based_on": [
+        "Omni-Channel Legal Service & Outreach Engine for OsintNeoAi — omnichannel_legal_service.py @55cfacb (205 lines, Sep 5 2026 full version)",
+        "Anonymous FOIA Dispatch Engine for OsintNeoAi & TaxFunded — foia_dispatch_engine.py @55cfacb (218 lines)",
+        "fax_hardmail_dispatch_v2.py (21,216 B, real FaxBetter/Lob/SMTP endpoints, returns skipped without keys)"
+      ],
+      "fixes_vs_original": [
+        "Fabricated FAX-{md5} / USPS-{md5} confirmation numbers REMOVED. Confirmations only from real provider responses.",
+        "Invented director@/foia@/records@ addresses REMOVED. Recipients must be verified from the target's published directions or marked TO_VERIFY; the engine refuses an approval packet for an unverified recipient.",
+        "EmailCascade.build_message that never sent REPLACED with an explicit draft -> approval (hash-bound) -> send-packet flow.",
+        "Identity is settings-only: this edition signs as the anonymous unit; the signed personal identity exists only in FUFOIA-Public settings, never in this repo."
+      ]
+    },
+    "mode": "DRAFT_ONLY_NOT_ARMED",
+    "verbatim_rule": "reason_for_contact and requested_action are stored verbatim, hashed at case creation, and must appear byte-for-byte in every draft. The engine verifies the hash substring before producing an approval packet. Elaboration may be added AROUND the verbatim text, never inside it, and the ask itself never changes across escalations — only the approach, audience, and channel change.",
+    "version": "1.0.0",
+    "send_via": "Operator mail route for records@osintneoai.org, exact approved copy only"
+  }
+}

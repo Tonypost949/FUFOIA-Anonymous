@@ -1,0 +1,57 @@
+{
+  "armed": false,
+  "case_id": "SELFTEST-OSINT-001",
+  "created": "2026-11-18",
+  "directions_first": {
+    "directed_route": "Self-test only — recipient is the unit's own records@osintneoai.org address, used to prove the draft pipeline end to end without aiming at any target.",
+    "status": "TEST_ONLY",
+    "target_published_directions": "N/A — pipeline test"
+  },
+  "status": "PIPELINE_TEST_NOT_A_REAL_CASE",
+  "subject_line": "Pipeline self-test (not a real case)",
+  "target": {
+    "chain": [
+      {
+        "chain_level": 1,
+        "contact_method": "email",
+        "email": "records@osintneoai.org",
+        "fax": null,
+        "mail_address": null,
+        "role": "Self-test recipient (unit's own address)",
+        "verification": "VERIFIED"
+      },
+      {
+        "chain_level": 2,
+        "contact_method": "email",
+        "email": "records@osintneoai.org",
+        "fax": null,
+        "mail_address": null,
+        "role": "Self-test recipient (unit's own address)",
+        "verification": "VERIFIED"
+      },
+      {
+        "chain_level": 3,
+        "contact_method": "mail",
+        "email": "records@osintneoai.org",
+        "fax": null,
+        "mail_address": {
+          "address_city": "Mountain View",
+          "address_country": "US",
+          "address_line1": "1600 Amphitheatre Parkway",
+          "address_state": "CA",
+          "address_zip": "94043",
+          "name": "Google LLC — Legal Department"
+        },
+        "role": "Self-test recipient (unit's own address)",
+        "verification": "VERIFIED"
+      }
+    ],
+    "organization": "SELF-TEST"
+  },
+  "verbatim": {
+    "reason_for_contact": "TEST REASON (OsintNeoAi variant): pipeline test of the anonymous workspace variant, not a real request.",
+    "requested_action": "TEST ASK: confirm the draft is signed as the OsintNeoAi unit, contains this text byte-for-byte, and carries no personal name or phone number."
+  },
+  "verbatim_status": "Test wording written by Neo for pipeline verification only.",
+  "verbatim_sha256": "7d47aba7ad93c2da00d8624d1c45c7672f43de74a0479c568874a421330c0127"
+}
